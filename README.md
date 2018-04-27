@@ -1,2 +1,2 @@
-# spark-scala-tutorial-ko
-Tutorial for Scala on Spark only
+# Apache Spark Scala Tutorial
+![](http://spark.apache.org/docs/latest/img/spark-logo-hd.png)
