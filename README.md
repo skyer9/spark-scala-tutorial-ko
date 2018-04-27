@@ -14,3 +14,16 @@
 * [HAMA 블로그](http://hamait.tistory.com/554)
 * [스칼라 학교](https://twitter.github.io/scala_school/ko/index.html)
 * [A free tutorial for Apache Spark.](https://github.com/deanwampler/spark-scala-tutorial)
+
+## Scala 개발환경 구성하기
+
+이 문서에서는 [SBT](http://www.scala-sbt.org/download.html) 를 이용해 샘플코드를 빌드하고 실행합니다. 툴의 다운로드 및 설치방법은 [여기](http://www.scala-sbt.org/download.html)를 참고하시기 바랍니다.
+
+```sh
+$ curl https://bintray.com/sbt/rpm/rpm > bintray-sbt-rpm.repo
+$ sudo mv bintray-sbt-rpm.repo /etc/yum.repos.d/
+$ sudo yum install sbt
+$ sbt
+sbt:ec2-user> exit
+$
+```
