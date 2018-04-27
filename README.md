@@ -73,3 +73,27 @@ class: int
 ```
 
 Scala 에서는 모든 변수는 객체입니다. 위에서 k 는 단순한 정수값이 아닌 정수형 객체가 됩니다.
+
+### 함수 생성(declare function)
+
+아래와 같이 함수를 생성할 수 있다.
+
+```sh
+scala> def addOne(m: Int): Int = m + 1
+addOne: (m: Int)Int
+scala> val three = addOne(2)
+three: Int = 3
+```
+
+위에서 `=` 뒤 부분이 함수의 내용이지만 `return` 키워드가 없습니다. Scala 에서는 `return` 키워드의 생략을 권장합니다.
+
+파라미터가 없는 경우 `()` 를 생략할 수 있습니다.
+
+```sh
+scala> def three() = 1 + 2
+three: ()Int
+scala> three()
+res3: Int = 3
+scala> three
+res4: Int = 3
+```
