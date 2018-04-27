@@ -97,3 +97,94 @@ res3: Int = 3
 scala> three
 res4: Int = 3
 ```
+
+### 클래스 생성(declare class)
+
+아래 코드를 Scala 콘솔에 입력합니다.
+
+```scala
+class Calculator {
+    val brand: String = "HP"
+    def add(m: Int, n: Int): Int = m + n
+}
+```
+
+```sh
+scala> class Calculator {
+     |   val brand: String = "HP"
+     |   def add(m: Int, n: Int): Int = m + n
+     | }
+defined class Calculator
+
+scala> val calc = new Calculator
+calc: Calculator = Calculator@e75a11
+
+scala> calc.add(1, 2)
+res1: Int = 3
+
+scala> calc.brand
+res2: String = "HP"
+```
+
+필드(멤버 변수)는 val 로, 메소드(멤버 함수)는 def 로 정의합니다.
+
+#### 클래스 생성자(class constructor)
+
+Scala 에서 생성자는 괄호안 자체입니다.
+
+```scala
+class Calculator(brand: String) {
+    println("start constructor")
+
+    /**
+    * 생성자
+    */
+    val color: String = if (brand == "TI") {
+        "blue"
+    } else if (brand == "HP") {
+        "black"
+    } else {
+        "white"
+    }
+
+    // 인스턴스 메소드
+    def add(m: Int, n: Int): Int = m + n
+
+    println("end constructor")
+}
+```
+
+위 코드를 Scala 콘솔에 입력하세요.
+
+```sh
+$ sbt console
+scala> class Calculator(brand: String) {
+     |     println("start constructor")
+     |     /**
+     |     * 생성자
+     |     */
+     |     val color: String = if (brand == "TI") {
+     |         "blue"
+     |     } else if (brand == "HP") {
+     |         "black"
+     |     } else {
+     |         "white"
+     |     }
+     |
+     |     // 인스턴스 메소드
+     |     def add(m: Int, n: Int): Int = m + n
+     |
+     |     println("end constructor")
+     | }
+defined class Calculator
+
+scala> val calc = new Calculator("HP")
+start constructor
+end constructor
+calc: Calculator = Calculator@524b86ce
+
+scala> calc.color
+res0: String = black
+```
+
+위 코드에서 `println` 이 두번 실행된 것을 볼 수 있습니다. 또한, `if` 문장이 리턴값을 반환해서 변수에 입력되고 있는 것을 볼 수 있습니다.
