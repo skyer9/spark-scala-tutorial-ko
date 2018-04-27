@@ -3,7 +3,7 @@
 
 이 문서는 Spark 에서 Scala 언어를 사용하고자 하는 개발자를 위한 튜토리얼입니다.
 
-이 문서를 읽기 위해서는 Java 에 대한 지식이 있어야 하고, Python 또는 Java 를 이용해 Scala 개발한 경험이 있어야 합니다.
+이 문서를 읽기 위해서는 Java 또는 Python 에 대한 지식이 있어야 하고,  Java 또는 Python 을 이용해 Scala 를 이용한 경험이 있어야 합니다.
 
 문서의 양을 줄이기 위해 Spark 에 대한 설명은 생략되며, 또한 Scala 문법중 Spark 개발에 불필요하다고 판단되는 문법 또한 생략됩니다.
 
@@ -87,8 +87,6 @@ three: Int = 3
 
 위에서 `=` 뒤 부분이 함수의 내용이지만 `return` 키워드가 없습니다. Scala 에서는 `return` 키워드의 생략을 권장합니다.
 
-파라미터가 없는 경우 `()` 를 생략할 수 있습니다.
-
 ```sh
 scala> def three() = 1 + 2
 three: ()Int
@@ -97,6 +95,10 @@ res3: Int = 3
 scala> three
 res4: Int = 3
 ```
+
+위에서 함수 정의에서도`1 + 2` 의 값이 정수이므로 `: Int` 가 생략되어도 정상 작동합니다.
+
+파라미터가 없는 경우 `()` 를 생략할 수 있습니다.
 
 ### 클래스 생성(declare class)
 
@@ -126,7 +128,7 @@ scala> calc.brand
 res2: String = "HP"
 ```
 
-필드(멤버 변수)는 val 로, 메소드(멤버 함수)는 def 로 정의합니다.
+필드(멤버 변수)는 val 로, 메소드(멤버 함수)는 def 로 정의합니다. var 로 필드를 생성할 수도 있지만 권장되지 않으므로 사용하지 않는 것이 좋습니다.
 
 #### 클래스 생성자(class constructor)
 
@@ -160,6 +162,7 @@ class Calculator(brand: String) {
 $ sbt console
 scala> class Calculator(brand: String) {
      |     println("start constructor")
+     |
      |     /**
      |     * 생성자
      |     */
