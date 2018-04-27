@@ -27,3 +27,49 @@ $ sbt
 sbt:ec2-user> exit
 $
 ```
+
+## Hello, World! 출력하기
+
+아래와 같은 방법으로 간단한 테스트 프로그램을 실행시킬 수 있습니다.
+
+```sh
+$ sbt
+sbt:ec2-user> console
+scala> println("Hello, World!")
+Hello, World!
+scala> :q
+sbt:ec2-user> exit
+$
+```
+
+## Scala 문법 설명하기
+
+### 변수 생성(declare variable)
+
+아래의 방법으로 변수를 생성할 수 있습니다.
+
+```sh
+$ sbt console
+scala> val i: Int = 1
+i: Int = 1
+scala> i = 2                // error
+scala> :q
+$
+```
+
+변수를 생성하는 키워드는 val 과 var 가 있습니다. val 로 생성한 변수는 값이 변경이 불가능한 변수가 됩니다. 반면에 var 로 생성한 변수는 값의 변경이 가능합니다. 하지만, Scala 에서는 var 의 사용하지 않을 것을 권장하고 있습니다.
+
+```sh
+scala> val j = 2
+j: Int = 2
+```
+
+Scala 에서는 변수값의 타입을 알 수 있는 경우(위에서 2 는 Int 이다.), 위와같이 변수타입을 생략할 수 있습니다.
+
+```sh
+scala> val k = 3
+scala> println("class: " + k.getClass)
+class: int
+```
+
+Scala 에서는 모든 변수는 객체입니다. 위에서 k 는 단순한 정수값이 아닌 정수형 객체가 됩니다.
