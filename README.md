@@ -269,3 +269,38 @@ def isYoungPerson(person: Person) = person match {
 ```
 
 ### 케이스 클래스(case class)
+
+`case class` 를 이용하면 new 를 사용하지 않아도 클래스를 생성할 수 있다.
+
+```scala
+class Person(name: String, age: Int)
+val a = Person("Lee", 21)               // error
+val a = new Person("Lee", 21)           // ok
+println(a.age)                          // error
+
+case class Person(name: String, age: Int)
+val a = Person("Lee", 21)               // ok
+println(a.age)                          // ok
+```
+
+#### 케이스 클래스와 패턴 매칭
+
+케이스 클래스는 패턴 매칭에 사용하기 위해 설계되었다.
+
+```scala
+case class Person(name: String, age: Int)
+
+def isYoungPerson(person: Person) = person match {
+    case Person("Lee", 12) => "Yes"
+    case Person(_, 12) => "Yes"
+    case _ => "No"
+}
+
+val p = Person("Lee", 12)
+println(isYoungPerson(p))
+
+val p2 = Person("Moon", 12)
+println(isYoungPerson(p2))
+```
+
+위에서 `new` 키워드 없이 클래스가 생성됨을 볼 수 있다. 또한 와일드카드 문자인 `_` 가 클래스생성에도 사용되었음을 볼 수 있다.
