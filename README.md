@@ -136,11 +136,11 @@ Scala 에서 생성자는 괄호안 자체입니다.
 
 ```scala
 class Calculator(brand: String) {
-    println("start constructor")
-
     /**
     * 생성자
     */
+    println("start constructor")
+
     val color: String = if (brand == "TI") {
         "blue"
     } else if (brand == "HP") {
