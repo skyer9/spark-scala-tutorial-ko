@@ -428,3 +428,93 @@ println(tup.find(t => t._1 > 1 && t._2 == "lion"))
 ```
 
 튜플을 입력값으로 받을 수 있다.
+
+#### Option()
+
+`Option()` 은 어떤 값이 있을 수도 있고 없을 수도 있을 때 사용된다. `find()` 에서 리턴되는 값이 `Option()` 이다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+val res1 = numbers.find(i => i > 5)
+val res2 = numbers.find(i => i > 10)
+
+val result = if (res1.isDefined) { res1.get * 2 } else { 0 }
+println(result)
+
+val result = res1.getOrElse(0) * 2
+println(result)
+```
+
+`find()` 는 리턴값이 없을 때 `None` 을 반환한다. 따라서 `res1.isDefined` 를 이용해 값이 있는지 체크하는 방법이 있다. 또는, `res1.getOrElse(0)` 를 이용해 디폴트값을 지정해 줄 수도 있다.
+
+#### drop(), dropWhile()
+
+`drop()` 은 입력되는 리스트에서 앞에서 `n` 개의 값을 없앤 나머지 리스트를 반환한다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+println(numbers.drop(5))
+println(numbers.drop(20))
+
+println(numbers.dropWhile(_ % 2 != 0))
+```
+
+`dropWhile()` 은 조건을 만족하지 않는 값이 있을 때까지의 값을 없앤 나머지 리스트를 반환한다. 위에서 2 에서 조건을 만족하지 않아 drop 을 중단하고 나머지 리스트를 반환하게 된다.
+
+#### foldLeft()
+
+`foldLeft()` 는 입력되는 리스트의 각 값들을 연산한 값의 누적값을 반환한다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+println(numbers.foldLeft(0) { (acc, i) => println("acc: " + acc + " i: " + i); acc + i })
+println(numbers.foldLeft(1000) { (acc, i) => println("acc: " + acc + " i: " + i); acc + i })
+// acc: 1000 i: 1
+// acc: 1001 i: 2
+// acc: 1003 i: 3
+// acc: 1006 i: 4
+// acc: 1010 i: 5
+// acc: 1015 i: 6
+// acc: 1021 i: 7
+// acc: 1028 i: 8
+// acc: 1036 i: 9
+// acc: 1045 i: 10
+// 1055
+```
+
+위에서 `0, 1000` 은 시작값이 되고, acc 에 누적값이 저장되며, i 가 입력된 리스트의 데이타이다.
+
+#### foldRight()
+
+`foldRight()` 는 `foldLeft()` 와 동일한 기능을 하는데 방향만 거꾸로이다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+println(numbers.foldRight(1000) { (acc, i) => println("acc: " + acc + " i: " + i); acc + i })
+```
+
+#### flatten()
+
+`flatten()` 은 입력된 데이타의 중첩(nested)단계를 한단계 풀어준다.
+
+```scala
+val nestedNumbers = List(List(1, 2), List(3, 4), List(5, 6))
+println(nestedNumbers.flatten)
+// List(1, 2, 3, 4, 5, 6)
+```
+
+파라미터가 없는 함수의 경우 `()` 를 생략할 수 있다.
+
+#### flatMap()
+
+`flatMap()` 은 `flatten()` 과 `map()` 을 합친것이다.
+
+```scala
+val nestedNumbers = List(List(1, 2), List(3, 4), List(5, 6))
+println(nestedNumbers.flatMap(x => x.map(_ * 2)))
+// List(2, 4, 6, 8, 10, 12)
+```
+
+리스트의 각 데이타에 대해 `map()` 을 적용하고 리턴된 값들을 `flatten()` 한다.
+
+## Scala Spark Example
