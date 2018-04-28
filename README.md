@@ -161,11 +161,11 @@ class Calculator(brand: String) {
 ```sh
 $ sbt console
 scala> class Calculator(brand: String) {
-     |     println("start constructor")
-     |
      |     /**
      |     * 생성자
      |     */
+     |     println("start constructor")
+     |
      |     val color: String = if (brand == "TI") {
      |         "blue"
      |     } else if (brand == "HP") {
@@ -193,3 +193,77 @@ res0: String = black
 위 코드에서 `println` 이 두번 실행된 것을 볼 수 있습니다.
 
 또한, `if` 문장이 리턴값을 반환해서 변수에 입력되고 있는 것을 볼 수 있습니다.
+
+#### 클래스 생성자의 파라미터를 맴버필드로 추가하기
+
+생성자에 전달된 파라미터는 생성자가 실행된 후에는 사라집니다.
+
+```scala
+class Person(name: String, age: Int)
+val person = new Person("mong", 9)
+println(person.age)                         // error
+```
+
+전달된 파라미터를 클래스의 맴버필드로 만들려면 아래와 같이 `val` 을 붙여주어야 합니다.
+
+```scala
+class Person(val name: String, val age: Int)
+val person = new Person("mong", 9)
+println(person.age)                         // ok
+```
+
+get,set 메소드는 자동으로 추가되므로 별도로 작업할 필요가 없습니다.
+
+#### 패턴 매칭(switch case statment)
+
+일반적인 switch case 문보다 더 많은 기능을 제공합니다.
+
+```scala
+val times = 3
+
+times match {
+    case 1 => "one"
+    case 2 => "two"
+    case i if i == 3 => "three"
+    case i if i == 4 => "four"
+    case _ => "some other number"
+}
+```
+
+단순히 정수매칭이나 문자열매칭 뿐만 아니라 조건문을 이용해 매칭할 수 있습니다.
+
+마지막에 보이는 `_` 은 와일드카드로 사용됩니다. 여기서는 `case else` 로 사용되고 `import org.apache.spark.SparkContext._` 와 같은 경우에는 하위에 있는 모든 것을 임포트합니다. 위에서 `case _` 가 없다면 매칭되는 값이 없을 때 에러가 발생합니다.
+
+##### 타입에 대한 패턴 매칭
+
+값에 대한 매칭 뿐만 아니라 타입에 대해서도 패턴 매칭이 가능합니다.
+
+```scala
+def bigger(o: Any): Any = {
+    o match {
+        case i: Int if i < 0 => i - 1
+        case i: Int => i + 1
+        case d: Double if d < 0.0 => d - 0.1
+        case d: Double => d + 0.1
+        case text: String => text + "s"
+        case _ => "what is it?"
+    }
+}
+
+bigger("cat")
+```
+
+위에서 정수 실수 뿐만 아니라 문자열과도 매칭함을 볼 수 있습니다.
+
+##### 클래스에 대한 패턴 매칭
+
+클래스에 대해서도 동일한 방식으로 패턴 매칭이 가능합니다.
+
+```scala
+class Person(val name: String, val age: Int)
+
+def isYoungPerson(person: Person) = person match {
+    case p if p.age < 20 => "Yes"
+    case _ => "No"
+}
+```
