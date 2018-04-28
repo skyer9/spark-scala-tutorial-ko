@@ -214,7 +214,7 @@ println(person.age)                         // ok
 
 get,set 메소드는 자동으로 추가되므로 별도로 작업할 필요가 없습니다.
 
-#### 패턴 매칭(switch case statment)
+### 패턴 매칭(switch case statment)
 
 일반적인 switch case 문보다 더 많은 기능을 제공합니다.
 
@@ -234,7 +234,7 @@ times match {
 
 마지막에 보이는 `_` 은 와일드카드로 사용됩니다. 여기서는 `case else` 로 사용되고 `import org.apache.spark.SparkContext._` 와 같은 경우에는 하위에 있는 모든 것을 임포트합니다. 위에서 `case _` 가 없다면 매칭되는 값이 없을 때 에러가 발생합니다.
 
-##### 타입에 대한 패턴 매칭
+#### 타입에 대한 패턴 매칭
 
 값에 대한 매칭 뿐만 아니라 타입에 대해서도 패턴 매칭이 가능합니다.
 
@@ -255,7 +255,7 @@ bigger("cat")
 
 위에서 정수 실수 뿐만 아니라 문자열과도 매칭함을 볼 수 있습니다.
 
-##### 클래스에 대한 패턴 매칭
+#### 클래스에 대한 패턴 매칭
 
 클래스에 대해서도 동일한 방식으로 패턴 매칭이 가능합니다.
 
@@ -267,3 +267,5 @@ def isYoungPerson(person: Person) = person match {
     case _ => "No"
 }
 ```
+
+### 케이스 클래스(case class)
