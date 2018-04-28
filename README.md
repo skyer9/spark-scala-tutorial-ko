@@ -304,3 +304,127 @@ println(isYoungPerson(p2))
 ```
 
 위에서 `new` 키워드 없이 클래스가 생성됨을 볼 수 있다. 또한 와일드카드 문자인 `_` 가 클래스생성에도 사용되었음을 볼 수 있다.
+
+### 기본 데이타셋(List, Set, Tuple)
+
+List 에는 동일 타입의 데이타를 입력할 수 있고 중복된 데이타도 입력 가능하다. Set 에는 중복되는 데이타를 입력할 수 없다. Tuple 에는 서로 다른 타입의 데이타를 묶을 수 있다. Tuple 은 첫번째 데이타 호출에 `0` 이 아닌 `1` 을 사용하고 있다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+println(numbers(2))
+
+val animals = Set("Cat", "Dog", "Tiger")
+println(animals("Cat"))
+
+val hostPort = ("localhost", 80)
+println(hostPort._1)
+
+val a = 1 -> 2
+println(a)
+```
+
+`->` 를 이용해 튜플을 생성할 수 있다.
+
+### 기본 데이타셋(Map)
+
+key-value 형태의 값의 묶음이 Map 이다.
+
+```scala
+val m = Map(1 -> "one", 2 -> "two")
+println(m(2))
+```
+
+위에서 `->` 는 특별한 문법이 아니고 튜플의 생성에 불과하다. 위에서 생성된 맵은 실제로는 Map((1, "one"), (2, "two")) 의 형태가 되고, 맵에 들어있는 데이타는 첫번째 값이 key 가 되고, 두번째 값이 value 가 된다.
+
+### 함수 조합(function combinator)
+
+리스트를 전달받아 일정한 처리를 하고 처리된 값을 전달해주는 것을 합수조합이라고 한다.
+
+#### map()
+
+다른 언어에서는 `for (int i = 0; i < 10; i++) { ... }` 스타일로 코딩하는 경우가 많지만, Scala 에서는 변수 생성을 지양한다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+println(numbers.map((i: Int) => i * 2))
+println(numbers.map(i => i * i))
+```
+
+위와 같이 `for` 문 대신에 `map()` 을 이용해 입력된 데이타를 각 값들을 연산할 수 있다. 입력되는 데이타가 정수형이 확실하므로 `: Int` 는 생략할 수 있다. `map()` 과 별도의 함수를 조합할 수도 있다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+def square(i: Int) = i * i
+println(numbers.map(square _))
+```
+
+#### foreach()
+
+`map()` 이 입력된 데이타를 그대로 두고 변형된 데이타를 반환하는것과 다르게, `foreach()` 는 입력된 값 자체를 변환하고 리턴값이 없다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+println(numbers.foreach(i => i * i))
+println(numbers)
+```
+
+`foreach()` 에게 리턴값을 요청하면 `Unit`(다른 언어에서는 `void`) 이 반환된다.
+
+#### filter()
+
+입력된 값을 필터링해서 값이 참인 것들로 이루어진 리스트를 반환한다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+println(numbers.filter(i => i % 2 == 0))
+```
+
+#### zip()
+
+두개의 리스트를 각각의 데이타를 묶어 튜플 리스트로 만든다.
+
+```scala
+val numbers = List(1, 2, 3, 4)
+val animals = List("dog", "cat", "lion", "tiger")
+println(numbers.zip(animals))
+// List((1,dog), (2,cat), (3,lion), (4,tiger))
+
+val numbers = List(1, 2, 3, 4)
+val animals = List("dog", "cat", "lion")
+println(numbers.zip(animals))
+// List((1,dog), (2,cat), (3,lion))
+
+val numbers = List(1, 2, 3)
+val animals = List("dog", "cat", "lion", "tiger")
+println(numbers.zip(animals))
+// List((1,dog), (2,cat), (3,lion))
+```
+
+데이타의 갯수가 맞지 않으면 맞는 만큼만 묶어서 리스트를 반환한다.
+
+#### partition()
+
+`partition()` 는 입력된 리스트를 둘로 쪼개어 두개의 리스트를 반환한다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+println(numbers.partition(_ % 2 == 0))
+val two = numbers.partition(_ % 2 == 0)
+println(two._1)
+```
+
+반환되는 값은 튜플로 묶여 있다. 한개의 리스트를 이용하려면 튜플의 접근법과 동일하게 `._1` 또는 `._2` 를 이용하면 된다.
+
+#### find()
+
+`find()` 는 조건을 만족하는 첫번째 값을 반환한다.
+
+```scala
+val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+println(numbers.find(i => i > 5))
+
+val tup = List((1,"dog"), (2,"cat"), (3,"lion"))
+println(tup.find(t => t._1 > 1 && t._2 == "lion"))
+```
+
+튜플을 입력값으로 받을 수 있다.
