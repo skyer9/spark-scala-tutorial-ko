@@ -29,48 +29,45 @@ sbt:ec2-user> exit
 $
 ```
 
-## Hello, World! 출력하기
+### Hello, World! 출력하기
 
 아래와 같은 방법으로 간단한 테스트 프로그램을 실행시킬 수 있다.
 
 ```sh
-$ sbt
-sbt:ec2-user> console
+$ mkdir sample
+$ cd sample/
+$ sbt console
 scala> println("Hello, World!")
 Hello, World!
 scala> :q
-sbt:ec2-user> exit
 $
 ```
 
 ## Scala 문법 설명하기
 
+이후에 있는 코드들은 `sbt console` 명령으로 콘솔에 로그인되어 있는 것을 전제로 한다.
+
 ### 변수 생성(declare variable)
 
 아래의 방법으로 변수를 생성할 수 있다.
 
-```sh
-$ sbt console
-scala> val i: Int = 1
-i: Int = 1
-scala> i = 2                // error
-scala> :q
-$
+```scala
+val i: Int = 1
+i = 2          // error
 ```
 
 변수를 생성하는 키워드는 val 과 var 가 있다. val 로 생성한 변수는 값의 변경이 불가능한 변수가 된다. 반면에 var 로 생성한 변수는 값의 변경이 가능하다. 하지만, Scala 에서는 var 를 **사용하지 않을 것**을 권장하고 있다.
 
-```sh
-scala> val j = 2
-j: Int = 2
+```scala
+val j = 2
 ```
 
-Scala 에서는 변수값의 타입을 알 수 있는 경우(위에서 2 는 Int 이다.), 위와같이 변수타입을 생략할 수 있다.
+Scala 에서는 변수값의 타입을 알 수 있는 경우(위에서 2 는 Int) 위와같이 변수타입(`: Int`)을 생략할 수 있다.
 
-```sh
-scala> val k = 3
-scala> println("class: " + k.getClass)
-class: int
+```scala
+val k = 3
+println("class: " + k.getClass)
+// class: int
 ```
 
 Scala 에서는 모든 변수는 객체다. 위에서 k 는 단순한 정수값이 아닌 정수형 객체가 된다.
@@ -79,27 +76,33 @@ Scala 에서는 모든 변수는 객체다. 위에서 k 는 단순한 정수값�
 
 아래와 같이 함수를 생성할 수 있다.
 
-```sh
-scala> def addOne(m: Int): Int = m + 1
-addOne: (m: Int)Int
-scala> val three = addOne(2)
-three: Int = 3
+```scala
+def addOne(m: Int): Int = m + 1
+val three = addOne(2)
+println(three)
+// three: Int = 3
 ```
 
 위에서 `=` 뒤 부분이 함수의 내용이지만 `return` 키워드가 없다. Scala 에서는 `return` 키워드의 생략을 권장한다.
 
-```sh
-scala> def three() = 1 + 2
-three: ()Int
-scala> three()
-res3: Int = 3
-scala> three
-res4: Int = 3
+```scala
+def three() = 1 + 2
+three()
+three
 ```
 
-위에서 함수 정의에서도`1 + 2` 의 값이 정수이므로 `: Int` 가 생략되어도 정상 작동한다.
+위에서 함수 정의에서 `1 + 2` 의 값이 정수이므로 `: Int` 가 생략되어도 정상 작동한다.
 
 파라미터가 없는 경우 `()` 를 생략할 수 있다.
+
+함수가 라인수가 많을 경우 아래와 같이 괄호를 추가한다.
+
+```scala
+def addOne(m: Int): Int = {
+    m + 1
+}
+print(addOne(2))
+```
 
 ### 클래스 생성(declare class)
 
@@ -110,26 +113,12 @@ class Calculator {
     val brand: String = "HP"
     def add(m: Int, n: Int): Int = m + n
 }
+val calc = new Calculator
+println(calc.add(1, 2))
+println(calc.brand)
 ```
 
-```sh
-scala> class Calculator {
-     |   val brand: String = "HP"
-     |   def add(m: Int, n: Int): Int = m + n
-     | }
-defined class Calculator
-
-scala> val calc = new Calculator
-calc: Calculator = Calculator@e75a11
-
-scala> calc.add(1, 2)
-res1: Int = 3
-
-scala> calc.brand
-res2: String = "HP"
-```
-
-필드(멤버 변수)는 val 로, 메소드(멤버 함수)는 def 로 정의한다. var 로 필드를 생성할 수도 있지만 권장되지 않으므로 사용하지 않는 것이 좋다.
+필드(멤버 변수)는 val 로, 메소드(멤버 함수)는 def 로 정의한다.
 
 #### 클래스 생성자(class constructor)
 
@@ -137,9 +126,6 @@ Scala 에서 생성자는 괄호안 자체이다.
 
 ```scala
 class Calculator(brand: String) {
-    /**
-    * 생성자
-    */
     println("start constructor")
 
     val color: String = if (brand == "TI") {
@@ -150,50 +136,18 @@ class Calculator(brand: String) {
         "white"
     }
 
-    // 인스턴스 메소드
     def add(m: Int, n: Int): Int = m + n
 
     println("end constructor")
 }
-```
 
-위 코드를 Scala 콘솔에 입력해보자.
-
-```sh
-$ sbt console
-scala> class Calculator(brand: String) {
-     |     /**
-     |     * 생성자
-     |     */
-     |     println("start constructor")
-     |
-     |     val color: String = if (brand == "TI") {
-     |         "blue"
-     |     } else if (brand == "HP") {
-     |         "black"
-     |     } else {
-     |         "white"
-     |     }
-     |
-     |     // 인스턴스 메소드
-     |     def add(m: Int, n: Int): Int = m + n
-     |
-     |     println("end constructor")
-     | }
-defined class Calculator
-
-scala> val calc = new Calculator("HP")
-start constructor
-end constructor
-calc: Calculator = Calculator@524b86ce
-
-scala> calc.color
-res0: String = black
+val calc = new Calculator("HP")
+println(calc.color)
 ```
 
 위 코드에서 `println` 이 두번 실행된 것을 볼 수 있다.
 
-또한, `if` 문장이 리턴값을 반환해서 변수에 입력되고 있는 것을 볼 수 있다.
+또한, `if` 문장이 리턴값을 반환해서 변수에 입력되고 있는 것을 볼 수 있다. Scala 에서는 대부분의 표현식이 리턴값을 가지며 `return` 키워드 없이도 함수의 리턴값으로 반환된다.
 
 #### 클래스 생성자의 파라미터를 맴버필드로 추가하기
 
@@ -202,7 +156,7 @@ res0: String = black
 ```scala
 class Person(name: String, age: Int)
 val person = new Person("mong", 9)
-println(person.age)                         // error
+println(person.age)                     // error
 ```
 
 전달된 파라미터를 클래스의 맴버필드로 만들려면 아래와 같이 `val` 을 붙여주어야 한다.
@@ -210,10 +164,10 @@ println(person.age)                         // error
 ```scala
 class Person(val name: String, val age: Int)
 val person = new Person("mong", 9)
-println(person.age)                         // ok
+println(person.age)                     // ok
 ```
 
-get,set 메소드는 자동으로 추가되므로 별도로 작업할 필요가 없다.
+get,set 메소드는 자동으로 추가되므로 별도로 작업할 필요가 없다. 또한, 다른 언어와 다르게 맴버변수 및 맴버함수가 `private` 을 별도로 지정해 주지 않는 한, `public` 이 디폴트로 지정된다.
 
 ### 패턴 매칭(switch case statment)
 
@@ -251,7 +205,7 @@ def bigger(o: Any): Any = {
     }
 }
 
-bigger("cat")
+println(bigger("cat"))
 ```
 
 위에서 정수 실수 뿐만 아니라 문자열과도 매칭함을 볼 수 있다.
@@ -306,9 +260,11 @@ println(isYoungPerson(p2))
 
 위에서 `new` 키워드 없이 클래스가 생성됨을 볼 수 있다. 또한 와일드카드 문자인 `_` 가 클래스생성에도 사용되었음을 볼 수 있다.
 
-### 기본 데이타셋(List, Set, Tuple)
+### 기본 데이타셋
 
-List 에는 동일 타입의 데이타를 입력할 수 있고 중복된 데이타도 입력 가능하다. Set 에는 중복되는 데이타를 입력할 수 없다. Tuple 에는 서로 다른 타입의 데이타를 묶을 수 있다. Tuple 은 첫번째 데이타 호출에 `0` 이 아닌 `1` 을 사용하고 있다.
+#### 리스트, 셋, 튜플(List, Set, Tuple)
+
+List 에는 동일 타입의 데이타만 입력할 수 있고 중복된 데이타도 입력 가능하다. Set 에는 중복되는 데이타를 입력할 수 없다. Tuple 에는 서로 다른 타입의 데이타를 묶을 수 있다. Tuple 은 첫번째 데이타 호출에 `._0` 이 아닌 `._1` 을 사용하고 있다.
 
 ```scala
 val numbers = List(1, 2, 3, 4)
@@ -326,7 +282,9 @@ println(a)
 
 `->` 를 이용해 튜플을 생성할 수 있다.
 
-### 기본 데이타셋(Map)
+### 기본 데이타셋
+
+#### 맵(Map)
 
 key-value 형태의 값의 묶음이 Map 이다.
 
@@ -335,7 +293,7 @@ val m = Map(1 -> "one", 2 -> "two")
 println(m(2))
 ```
 
-위에서 `->` 는 특별한 문법이 아니고 튜플의 생성에 불과하다. 위에서 생성된 맵은 실제로는 Map((1, "one"), (2, "two")) 의 형태가 되고, 맵에 들어있는 데이타는 첫번째 값이 key 가 되고, 두번째 값이 value 가 된다.
+위에서 `->` 는 특별한 문법이 아니고 튜플의 생성에 불과하다. 위에서 생성된 맵은 실제로는 `Map((1, "one"), (2, "two"))` 의 형태가 되고, 맵에 들어있는 데이타는 첫번째 값이 key 가 되고, 두번째 값이 value 가 된다.
 
 ### 함수 조합(function combinator)
 
@@ -351,7 +309,9 @@ println(numbers.map((i: Int) => i * 2))
 println(numbers.map(i => i * i))
 ```
 
-위와 같이 `for` 문 대신에 `map()` 을 이용해 입력된 데이타를 각 값들을 연산할 수 있다. 입력되는 데이타가 정수형이 확실하므로 `: Int` 는 생략할 수 있다. `map()` 과 별도의 함수를 조합할 수도 있다.
+위와 같이 `for` 문 대신에 `map()` 을 이용해 입력된 데이타를 각 값들을 연산할 수 있다. 입력되는 데이타가 정수형이 확실하므로 `: Int` 는 생략할 수 있다.
+
+`map()` 과 별도의 함수를 조합할 수도 있다.
 
 ```scala
 val numbers = List(1, 2, 3, 4)
@@ -365,8 +325,7 @@ println(numbers.map(square _))
 
 ```scala
 val numbers = List(1, 2, 3, 4)
-println(numbers.foreach(i => i * i))
-println(numbers)
+numbers.foreach(i => println(i))
 ```
 
 `foreach()` 에게 리턴값을 요청하면 `Unit`(다른 언어에서는 `void`) 이 반환된다.
@@ -409,7 +368,6 @@ println(numbers.zip(animals))
 
 ```scala
 val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-println(numbers.partition(_ % 2 == 0))
 val two = numbers.partition(_ % 2 == 0)
 println(two._1)
 ```
@@ -442,7 +400,7 @@ val res2 = numbers.find(i => i > 10)
 val result = if (res1.isDefined) { res1.get * 2 } else { 0 }
 println(result)
 
-val result = res1.getOrElse(0) * 2
+val result = res2.getOrElse(0) * 2
 println(result)
 ```
 
@@ -456,7 +414,6 @@ println(result)
 val numbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 println(numbers.drop(5))
 println(numbers.drop(20))
-
 println(numbers.dropWhile(_ % 2 != 0))
 ```
 
@@ -504,8 +461,6 @@ println(nestedNumbers.flatten)
 // List(1, 2, 3, 4, 5, 6)
 ```
 
-파라미터가 없는 함수의 경우 `()` 를 생략할 수 있다.
-
 #### flatMap()
 
 `flatMap()` 은 `flatten()` 과 `map()` 을 합친것이다.
@@ -517,6 +472,86 @@ println(nestedNumbers.flatMap(x => x.map(_ * 2)))
 ```
 
 리스트의 각 데이타에 대해 `map()` 을 적용하고 리턴된 값들을 `flatten()` 한다.
+
+## Scala Spark 프로젝트 생성하기
+
+### 새 프로젝트 생성하기
+
+아래 명령으로 Scala 버전을 확인한다.
+
+```sh
+$ spark-shell
+......
+Using Scala version 2.11.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_161)
+......
+scala> :q
+```
+
+새 프로젝트를 생성한다.
+
+```sh
+$ mkdir my_project
+$ cd my_project/
+$ sbt
+> set name := "MyProject"
+> set version := "0.1"
+> set scalaVersion := "2.11.8"
+> session save
+> exit
+```
+
+`Main.scala` 에 아래 내용을 입력한다.
+
+```sh
+$ mkdir -p src/main/scala
+$ vi src/main/scala/Main.scala
+```
+
+```scala
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
+
+object Main {
+    def main(args: Array[String]) {
+
+        val conf = new SparkConf().setAppName("HelloWorld")
+        val sc = new SparkContext(conf)
+
+        println("===================================")
+        println("Hello, world!")
+        println("===================================")
+
+        sc.stop()
+    }
+}
+```
+
+```sh
+$ vi project/plugins.sbt
+---------------------------------------------------------------------
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
+---------------------------------------------------------------------
+
+$ vi build.sbt
+......
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % "2.3.0" % "provided"
+)
+......
+```
+
+컴파일하고 실행한다.
+
+```sh
+$ sbt assembly
+$ spark-submit --class Main --master local target/scala-2.11/MyProject-assembly-0.1.jar
+......
+===================================
+Hello, world!
+===================================
+......
+```
 
 ## Scala Spark Example With Web Log
 
