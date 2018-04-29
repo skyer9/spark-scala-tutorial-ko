@@ -555,39 +555,32 @@ Hello, world!
 
 ## Scala Spark Example With Web Log
 
-Spark Shell 을 구동한다.
-
-```sh
-$ spark-shell
-Spark context Web UI available at http://ip-172-31-16-104.ap-northeast-2.compute.internal:4040
-Spark context available as 'sc' (master = local[*], app id = local-1524908007684).
-Spark session available as 'spark'.
-Welcome to
-      ____              __
-     / __/__  ___ _____/ /__
-    _\ \/ _ \/ _ `/ __/  '_/
-   /___/ .__/\_,_/_/ /_/\_\   version 2.3.0
-      /_/
-
-Using Scala version 2.11.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_161)
-Type in expressions to have them evaluated.
-Type :help for more information.
-
-scala>
-```
-
-## 웹로그 살펴보기
-
 웹로그는 공개할 수가 없어 개인적으로 구하기 바랍니다.
 
-```scala
-scala> val log_RDD = sc.textFile("/home/ec2-user/dev/www2-www-18041917.gz")
+Spark Shell 을 이용하는 방법과 sbt 툴을 이용하는 방법 중 sbt 툴을 이용하는 방식으로 진행한다.
+
+아래 내용은 위에서 생성한 프로젝트 중 `Main.scala` 를 수정하는 방식으로 진행한다.
+
+### 웹로그에서 5라인만 출력하기
+
+```sh
+$ vi src/main/scala/Main.scala
+......
+        val conf = new SparkConf().setAppName("HelloWorld")
+        val sc = new SparkContext(conf)
+
+        val log_RDD = sc.textFile("/home/ec2-user/dev/www2-www-18041917.gz")
+        log_RDD.take(5).map(line => println(line))
+
+        sc.stop()
+......
 ```
 
-로그파일은 로그의 첫부분에 로그파일의 포멧정보가 있다.
+컴파일하고 실행한다.
 
-```scala
-scala> log_RDD.take(5).map(line => println(line))
+```sh
+$ sbt assembly
+$ spark-submit --class Main --master local target/scala-2.11/MyProject-assembly-0.1.jar
 #Software: Microsoft Internet Information Services 7.5
 #Version: 1.0
 #Date: 2018-04-19 08:00:00
@@ -595,18 +588,43 @@ scala> log_RDD.take(5).map(line => println(line))
 2018-04-19 08:00:00 110.93.XXX.83 GET /login/loginpage.asp vType=G 80 - 106.XXX.166.106 Mozilla/5.0+(Windows+NT+6.1;+WOW64;+Trident/7.0;+rv:11.0)+like+Gecko http://www.test.co.kr/ 302 0 0 0
 ```
 
+로그파일은 로그의 첫부분에 로그파일의 포멧정보가 있다.
+
+### 가장 많이 접속한 클라이언트 아이피 구하기
+
 공백문자로 쪼갤 수 있게 되어 있다. 로그포멧은 서버설정에 의해 결정되는데 위의 경우 총 15개의 필드가 있고 9번째에 클라이언트 아이피가 있다. 이런 정보를 바탕으로 클라이언트 아이피별 조회건수를 구해보자.
 
-```scala
-scala> :paste
-// Entering paste mode (ctrl-D to finish)
-val filtered_log_array = log_RDD.take(50)
-       .map(line => line.split(" "))
-       .filter(line => line.size == 15)
-       .map(arr => (arr(0), arr(1), arr(8)))
-ctrl-D
+```sh
+$ vi src/main/scala/Main.scala
+......
+        val conf = new SparkConf().setAppName("HelloWorld")
+        val sc = new SparkContext(conf)
 
-scala> val df = sc.parallelize(filtered_log_array).toDF("date", "time", "clientip")
+        val log_RDD = sc.textFile("/home/ec2-user/dev/www2-www-18041917.gz")
+        val filtered_log_RDD = log_RDD.map(line => line.split(" "))
+                                      .filter(line => line.size == 15)
+                                      .map(arr => (arr(8), 1))
+                                      .reduceByKey(_ + _)
+                                      .sortBy(_._2)
+        filtered_log_RDD.zipWithIndex()
+                        .sortBy(_._2, ascending = false)
+                        .collect
+                        .foreach(row => println(row._1))
 
-scala> df.show()
+        sc.stop()
+......
+```
+
+```sh
+$ sbt assembly
+$ spark-submit --class Main --master local target/scala-2.11/MyProject-assembly-0.1.jar
+(106.XXX.166.106,1545)
+(211.XXX.239.243,927)
+(118.XXX.84.92,280)
+(112.XXX.95.50,262)
+(211.XXX.98.3,256)
+(1.XXX.66.232,244)
+(185.XXX.151.187,218)
+(210.XXX.101.198,200)
+......
 ```
