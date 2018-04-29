@@ -1,5 +1,6 @@
 # Apache Spark Scala Tutorial For Korean
-![](http://spark.apache.org/docs/latest/img/spark-logo-hd.png)
+
+![Spark](http://spark.apache.org/docs/latest/img/spark-logo-hd.png)
 
 이 문서는 Spark 에서 Scala 언어를 사용하고자 하는 개발자를 위한 튜토리얼이다.
 
@@ -85,7 +86,7 @@ scala> val three = addOne(2)
 three: Int = 3
 ```
 
-위에서 `=` 뒤 부분이 함수의 내용이지만 `return` 키워드가 없습니다. Scala 에서는 `return` 키워드의 생략을 권장한다.
+위에서 `=` 뒤 부분이 함수의 내용이지만 `return` 키워드가 없다. Scala 에서는 `return` 키워드의 생략을 권장한다.
 
 ```sh
 scala> def three() = 1 + 2
@@ -517,4 +518,60 @@ println(nestedNumbers.flatMap(x => x.map(_ * 2)))
 
 리스트의 각 데이타에 대해 `map()` 을 적용하고 리턴된 값들을 `flatten()` 한다.
 
-## Scala Spark Example
+## Scala Spark Example With Web Log
+
+Spark Shell 을 구동한다.
+
+```sh
+$ spark-shell
+Spark context Web UI available at http://ip-172-31-16-104.ap-northeast-2.compute.internal:4040
+Spark context available as 'sc' (master = local[*], app id = local-1524908007684).
+Spark session available as 'spark'.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 2.3.0
+      /_/
+
+Using Scala version 2.11.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_161)
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala>
+```
+
+## 웹로그 살펴보기
+
+웹로그는 공개할 수가 없어 개인적으로 구하기 바랍니다.
+
+```scala
+scala> val log_RDD = sc.textFile("/home/ec2-user/dev/www2-www-18041917.gz")
+```
+
+로그파일은 로그의 첫부분에 로그파일의 포멧정보가 있다.
+
+```scala
+scala> log_RDD.take(5).map(line => println(line))
+#Software: Microsoft Internet Information Services 7.5
+#Version: 1.0
+#Date: 2018-04-19 08:00:00
+#Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status time-taken
+2018-04-19 08:00:00 110.93.XXX.83 GET /login/loginpage.asp vType=G 80 - 106.XXX.166.106 Mozilla/5.0+(Windows+NT+6.1;+WOW64;+Trident/7.0;+rv:11.0)+like+Gecko http://www.test.co.kr/ 302 0 0 0
+```
+
+공백문자로 쪼갤 수 있게 되어 있다. 로그포멧은 서버설정에 의해 결정되는데 위의 경우 총 15개의 필드가 있고 9번째에 클라이언트 아이피가 있다. 이런 정보를 바탕으로 클라이언트 아이피별 조회건수를 구해보자.
+
+```scala
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+val filtered_log_array = log_RDD.take(50)
+       .map(line => line.split(" "))
+       .filter(line => line.size == 15)
+       .map(arr => (arr(0), arr(1), arr(8)))
+ctrl-D
+
+scala> val df = sc.parallelize(filtered_log_array).toDF("date", "time", "clientip")
+
+scala> df.show()
+```
