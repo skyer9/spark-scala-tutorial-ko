@@ -282,8 +282,6 @@ println(a)
 
 `->` 를 이용해 튜플을 생성할 수 있다.
 
-### 기본 데이타셋
-
 #### 맵(Map)
 
 key-value 형태의 값의 묶음이 Map 이다.
@@ -505,6 +503,7 @@ $ sbt
 ```sh
 $ mkdir -p src/main/scala
 $ vi src/main/scala/Main.scala
+# fix linter warning
 ```
 
 ```scala
