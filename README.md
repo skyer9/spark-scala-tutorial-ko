@@ -549,8 +549,10 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
 
 $ vi build.sbt
 ......
+val sparkVersion = "2.3.0"
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "2.3.0" % "provided"
+  "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+  "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
 )
 ......
 ```
