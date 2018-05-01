@@ -475,12 +475,22 @@ println(nestedNumbers.flatMap(x => x.map(_ * 2)))
 
 #### 함수 조합(function combinator) 과 패턴매칭
 
-함수 조합과 패턴매칭을 사용하기 위해서는 `{ ... }` 과 같은 익명함수(anonymous function) 를 사용해야 한다.
+함수조합과 패턴매칭을 함께 사용하면 아래와 같이 코드를 작성할 수 있다.
+
+```scala
+val log = Array(("2018-04-11", "11:22:33", "itemid=112233"), ("2018-04-12", "11:12:32", "itemid=443322"))
+val parsed = log.map(i => i match {
+    case (yyyymmdd, hhmmss, params) =>
+        println(yyyymmdd)
+})
+```
+
+하지만 익명함수(anonymous function) 를 사용해 `match` 키워드없이 간결하게 코드를 작성할 수 있다. 왜 이런 코드가 작성하는지 확인하려면 `PartialFunction` 을 알아야 하는데, 그냥 알아보지 않을 것을 권장한다. (-.-)
 
 ```scala
 val log = Array(("2018-04-11", "11:22:33", "itemid=112233"), ("2018-04-12", "11:12:32", "itemid=443322"))
 val parsed = log.map({
-    case (yyyymmdd:String, hhmmss:String, params:String) =>
+    case (yyyymmdd, hhmmss, params) =>
         println(yyyymmdd)
 })
 ```
@@ -490,7 +500,7 @@ Scala 에서는 함수의 파라미터가 한개일 경우 `()` 를 생략할 �
 ```scala
 val log = Array(("2018-04-11", "11:22:33", "itemid=112233"), ("2018-04-12", "11:12:32", "itemid=443322"))
 val parsed = log.map{
-    case (yyyymmdd:String, hhmmss:String, params:String) =>
+    case (yyyymmdd, hhmmss, params) =>
         println(yyyymmdd)
 }
 ```
