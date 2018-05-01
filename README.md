@@ -485,7 +485,7 @@ val parsed = log.map(i => i match {
 })
 ```
 
-하지만 익명함수(anonymous function) 를 사용해 `match` 키워드없이 간결하게 코드를 작성할 수 있다. 왜 이런 코드가 작성하는지 확인하려면 `PartialFunction` 을 알아야 하는데, 그냥 알아보지 않을 것을 권장한다. (-.-)
+하지만 익명함수(anonymous function) 를 사용해 `match` 키워드없이 간결하게 코드를 작성할 수 있다. 왜 이런 코드가 작동하는지 확인하려면 `PartialFunction` 을 알아야 하는데, 그냥 알아보지 않을 것을 권장한다. (-.-)
 
 ```scala
 val log = Array(("2018-04-11", "11:22:33", "itemid=112233"), ("2018-04-12", "11:12:32", "itemid=443322"))
