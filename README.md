@@ -476,7 +476,7 @@ println(nestedNumbers.flatMap(x => x.map(_ * 2)))
 정규 표현식은 아래와 같이 사용할 수 있다.
 
 ```scala
-val params = "itemid=1234&ggsn=abcd1234"
+val params = "itemid=1234&uid=abcd1234"
 
 val regexItemid = "itemid=[0-9]+".r
 val matchOne = regexItemid.findFirstIn(params).getOrElse("").replace("itemid=", "")
@@ -484,6 +484,23 @@ println(matchOne)
 
 val regex = "([0-9]+)".r
 regex.findAllIn(params).matchData.foreach(item => println(item.group(0)))
+```
+
+또는 패턴매칭을 이용해 간단히 정규표현식을 사용할 수 있다.
+
+```scala
+val pattern_itemid_uid = "itemid=([0-9]+).*uid=([a-zA-Z0-9]+)".r
+val pattern_itemid = "itemid=([0-9]+)".r
+val pattern_uid = "uid=([a-z0-9]+)".r
+
+val params = "itemid=1234&uid=abcd1234"
+
+val (itemid, uid) = params match {
+    case pattern_itemid_uid(itemid, uid) => (itemid, uid)
+    case pattern_itemid(itemid) => (itemid, "")
+    case pattern_uid(uid) => ("", uid)
+    case _ => ("", "")
+}
 ```
 
 ## Scala Spark 프로젝트 생성하기
@@ -671,17 +688,22 @@ object Main {
                             .take(1).
                             foreach(row => println(row.mkString(" ")))
 
-        val patternItemid = "itemid=([0-9]+)".r
-        val patternGgsn = "uid=([0-9a-zA-Z]+)".r
+        val pattern_itemid_uid = "itemid=([0-9]+).*uid=([a-zA-Z0-9]+)".r
+        val pattern_itemid = "itemid=([0-9]+)".r
+        val pattern_uid = "uid=([a-z0-9]+)".r
         val filtered_02_log_RDD = filtered_01_log_RDD.filter(row => row(4) == "/shopping/Product.asp")
                                                     .map(row => (row(0), row(1), row(5)))
                                                     .map{
                                                         case (yyyymmdd, hhmmss, params) =>
                                                             val format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                                                             val datetime = format.parse(yyyymmdd + " " + hhmmss)
-                                                            val itemid = patternItemid.findFirstIn(params).getOrElse("").replace("itemid=", "")
-                                                            val ggsn = patternGgsn.findFirstIn(params).getOrElse("").replace("uid=", "")
-                                                            (datetime.getTime(), itemid, ggsn)
+                                                            val (itemid, uid) = params match {
+                                                                case pattern_itemid_uid(itemid, uid) => (itemid, uid)
+                                                                case pattern_itemid(itemid) => (itemid, "")
+                                                                case pattern_uid(uid) => ("", uid)
+                                                                case _ => ("", "")
+                                                            }
+                                                            (datetime.getTime(), itemid, uid)
                                                     }
         println("====================================================")
         println("get : time / itemid / userkey")
