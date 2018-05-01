@@ -471,6 +471,21 @@ println(nestedNumbers.flatMap(x => x.map(_ * 2)))
 
 리스트의 각 데이타에 대해 `map()` 을 적용하고 리턴된 값들을 `flatten()` 한다.
 
+### 정규표현식(Regular Expressions)
+
+정규 표현식은 아래와 같이 사용할 수 있다.
+
+```scala
+val params = "itemid=1234&ggsn=abcd1234"
+
+val regexItemid = "itemid=[0-9]+".r
+val matchOne = regexItemid.findFirstIn(params).getOrElse("").replace("itemid=", "")
+println(matchOne)
+
+val regex = "([0-9]+)".r
+regex.findAllIn(params).matchData.foreach(item => println(item.group(0)))
+```
+
 ## Scala Spark 프로젝트 생성하기
 
 ### 새 프로젝트 생성하기
