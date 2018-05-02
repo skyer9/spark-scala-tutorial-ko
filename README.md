@@ -156,7 +156,7 @@ println(calc.color)
 ```scala
 class Person(name: String, age: Int)
 val person = new Person("mong", 9)
-println(person.age)                     // error
+println(person.age)       // error
 ```
 
 전달된 파라미터를 클래스의 맴버필드로 만들려면 아래와 같이 `val` 을 붙여주어야 한다.
@@ -164,7 +164,7 @@ println(person.age)                     // error
 ```scala
 class Person(val name: String, val age: Int)
 val person = new Person("mong", 9)
-println(person.age)                     // ok
+println(person.age)       // ok
 ```
 
 get,set 메소드는 자동으로 추가되므로 별도로 작업할 필요가 없다. 또한, 다른 언어와 다르게 맴버변수 및 맴버함수가 `private` 을 별도로 지정해 주지 않는 한, `public` 이 디폴트로 지정된다.
@@ -229,13 +229,13 @@ def isYoungPerson(person: Person) = person match {
 
 ```scala
 class Person(name: String, age: Int)
-val a = Person("Lee", 21)               // error
-val a = new Person("Lee", 21)           // ok
-println(a.age)                          // error
+val a = Person("Lee", 21)        // error
+val a = new Person("Lee", 21)    // ok
+println(a.age)                   // error
 
 case class Person(name: String, age: Int)
-val a = Person("Lee", 21)               // ok
-println(a.age)                          // ok
+val a = Person("Lee", 21)        // ok
+println(a.age)                   // ok
 ```
 
 #### 케이스 클래스와 패턴 매칭
