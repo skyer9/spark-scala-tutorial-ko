@@ -537,6 +537,30 @@ val (itemid, uid) = params match {
 }
 ```
 
+### 싱글톤 객체(Singleton Class, Static Object)
+
+Scala 에서는 싱글톤 객체를 위해 `object` 키워드를 사용한다.
+
+```scala
+object Timer {
+    var count = 0
+
+    def currentCount(): Long = {
+        count += 1
+        count
+    }
+}
+
+println(Timer.currentCount())
+// 1
+println(Timer.currentCount())
+// 2
+
+val e = new Timer()     // error
+```
+
+싱글톤 객체는 `new` 를 이용해 인스턴스로 만들 수 없다.
+
 ## Scala Spark 프로젝트 생성하기
 
 ### 새 프로젝트 생성하기
