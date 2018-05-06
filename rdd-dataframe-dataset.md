@@ -6,6 +6,10 @@
 
 `RDD` 는 Spark 의 핵심이 되는 데이타포멧으로, `DataFrame, Dataset` API 가 지원하지 않는 저레벨( low-level) 변환이 필요하거나, 데이타가 구조화할 수 없는 단순 텍스트같은 데이타거나, 구조화된 데이타의 이점과 최적화 및 퍼포먼스 향상에 관심이 없을 때 사용합니다.
 
+> When to use RDDs?
+> - you don’t care about imposing a schema, such as columnar format, while processing or accessing data attributes by name or column; and
+> - you can forgo some optimization and performance benefits available with DataFrames and Datasets for structured and semi-structured data.
+
 `RDD` 는 `Dataset` 대비 4배의 메모리를 차지하고, 속도 또한 느리기 때문에 가급적 사용하지 않을 것을 권장합니다.
 
 ## DataFrame, Dataset
