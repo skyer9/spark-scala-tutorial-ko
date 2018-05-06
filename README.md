@@ -832,6 +832,113 @@ get : prev itemid / curr itemid
 
 여기서 다시 이전 상품코드로 `groupBy()` 하면 특정 상품을 조회한 고객이 다음에 조회한 상품, 즉 `Customers who viewed this item also viewed` 를 구할 수 있다.
 
+### 이상품을 조회한 고객이 조회한 다른 상품 구하기(with Dataset)
+
+위 소스를 Dataset 을 이용해 다시 구현해 보자. `Dataset` 은 `RDD` 에 비해 2배 속도가 빠르고, 메모리 소모량이 1/4 이라고 하니 어쩔 수 없는 상황이 아니면 `Dataset` 을 쓰도록 하자.
+
+```scala
+// -*- coding: utf-8 -*-
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
+import org.apache.spark.sql._
+
+object Main {
+    case class RawLog(yyyymmdd: String, hhmmss: String, params: String)
+    case class FilteredLog(unixtime: Long, itemid: String, uid: String)
+
+    def main(args: Array[String]) {
+
+        val conf = new SparkConf().setAppName("DS Project")
+        val sc = new SparkContext(conf)
+        val spark = SparkSession.builder()
+                        .appName("DS Project")
+                        .getOrCreate()
+
+        val sqlContext= new SQLContext(sc)
+        import sqlContext.implicits._
+
+        // spark-shell 에서 테스트하려면 아래 내용을 입력해 주어야 한다.
+        // $ vi spark/conf/spark-defaults.conf
+        // spark.jars.packages    org.apache.hadoop:hadoop-aws:2.7.6
+
+        // ==========================================================
+        // S3 접속을 위한 설정하기
+        val region = "ap-northeast-2"
+        System.setProperty("com.amazonaws.services.s3.enableV4", "true")
+        sc.hadoopConfiguration.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+        sc.hadoopConfiguration.set("com.amazonaws.services.s3.enableV4", "true")
+        sc.hadoopConfiguration.set("fs.s3a.endpoint", "s3." + region + ".amazonaws.com")
+
+        // ==========================================================
+        // RDD 포멧으로 로그파일 열기
+        val rdd = sc.textFile("s3a://버킷이름/파일이름")
+                    .map(line => line.split(" "))
+                    .filter(line => line.size == 15 && line(4) == "/shopping/Product.asp")
+                    .map(row => RawLog(row(0), row(1), row(5)))
+
+        // ==========================================================
+        // DataFrame 으로 변경
+        val df = rdd.toDF()
+        // df.show()
+
+        val pattern_itemid_uid = "itemid=([0-9]+).*uid=([a-zA-Z0-9]+)".r
+        val pattern_itemid = ".*itemid=([0-9]+).*".r
+        val pattern_uid = ".*uid=([a-z0-9]+).*".r
+        val format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+        // ==========================================================
+        // Dataset 으로 변경
+        val ds = df.map(row => {
+            val yyyymmdd = row.getAs[String]("yyyymmdd")
+            val hhmmss = row.getAs[String]("hhmmss")
+            val params = row.getAs[String]("params")
+
+            val datetime = format.parse(yyyymmdd + " " + hhmmss)
+            val (itemid, uid) = params match {
+                case pattern_itemid_uid(itemid, uid) => (itemid, uid)
+                case pattern_itemid(itemid) => (itemid, "")
+                case pattern_uid(uid) => ("", uid)
+                case _ => ("", "")
+            }
+
+            val unixtime = datetime.getTime() / 1000
+            FilteredLog(unixtime, itemid, uid)
+        })
+        .filter(row => row.uid != "")
+        //ds.show()
+
+        ds.createOrReplaceTempView("tv_row_log")
+
+        val resultDS = spark.sql("""
+            SELECT T.prev_itemid, T.itemid, COUNT(*) as cnt
+            FROM
+                (
+                    SELECT
+                        unixtime, itemid
+                        , lag(itemid) OVER (PARTITION BY uid ORDER BY unixtime) AS prev_itemid
+                        , lag(unixtime) OVER (PARTITION BY uid ORDER BY unixtime) AS prev_unixtime
+                    FROM tv_row_log
+                ) T
+            WHERE
+                1 = 1
+                AND T.prev_itemid is not NULL
+                AND (unixtime - prev_unixtime) <= 8 * 60
+                AND itemid <> prev_itemid
+            GROUP BY
+                T.prev_itemid, T.itemid
+            ORDER BY
+                cnt desc, T.prev_itemid, T.itemid
+        """)
+        resultDS.show()
+
+        sc.stop()
+    }
+}
+```
+
+기존에 `sliding` 함수에 비해 `lag` 이 더 깔끔하게 동작한다.
+
 ## 더보기
 
 [RDD, DataFrame, DataSet 의 차이점](./rdd-dataframe-dataset.md)
