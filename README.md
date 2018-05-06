@@ -836,6 +836,19 @@ get : prev itemid / curr itemid
 
 위 소스를 Dataset 을 이용해 다시 구현해 보자. `Dataset` 은 `RDD` 에 비해 2배 속도가 빠르고, 메모리 소모량이 1/4 이라고 하니 어쩔 수 없는 상황이 아니면 `Dataset` 을 쓰도록 하자.
 
+```sh
+$ vi build.sbt
+......
+val sparkVersion = "2.3.0"
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % sparkVersion % "provided"
+  , "org.apache.spark" %% "spark-sql" % sparkVersion % "provided"
+  // , "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
+  , "org.apache.hadoop" % "hadoop-aws" % "2.7.6" % "provided"
+)
+......
+```
+
 ```scala
 // -*- coding: utf-8 -*-
 import org.apache.spark.SparkContext
