@@ -25,7 +25,7 @@
 | Python*  | DataFrame                                       |
 | R*       | DataFrame                                       |
 
-* Python, R 은 언어의 특성상 compile-time 타입체크를 지원하지 않아서 `untyped API` 만 존재합니다.
+- Python, R 은 언어의 특성상 compile-time 타입체크를 지원하지 않아서 `untyped API` 만 존재합니다.
 
 `DataFrame and Dataset API` 는 동일한 엔진 위에서 작동하므로, `R, Java, Scala, or Python` 에서 동일한 속도와 메모리 효율을 제공한다고 합니다.
 
