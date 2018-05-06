@@ -831,3 +831,7 @@ get : prev itemid / curr itemid
 `sliding()` 을 이용하면 이전 로그라인과 현재 로그라인을 한줄로 만들 수 있다. 그중에 userKey 가 동일하고, 상품페이지 조회시간 간격이 8분 미만인 내역만 뽑으면 위와 같이 이전에 조회한 상품코드와 현재 조회하고 있는 상품코드를 구할 수 있다.
 
 여기서 다시 이전 상품코드로 `groupBy()` 하면 특정 상품을 조회한 고객이 다음에 조회한 상품, 즉 `Customers who viewed this item also viewed` 를 구할 수 있다.
+
+## 더보기
+
+[RDD, DataFrame, DataSet 의 차이점](./rdd-dataframe-dataset.md)
